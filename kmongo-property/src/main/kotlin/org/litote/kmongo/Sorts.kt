@@ -64,7 +64,7 @@ fun descending(properties: List<KProperty<*>>): Bson = Sorts.descending(properti
  * @return the sort specification
  * @mongodb.driver.manual reference/operator/getProjection/meta/#sort textScore
  */
-fun <T> KProperty<T>.sortByMetaTextScore(): Bson = Sorts.metaTextScore(path())
+inline fun <reified T> KProperty<T>.sortByMetaTextScore(): Bson = Sorts.metaTextScore(path())
 
 /**
  * Combine multiple sort specifications.  If any properties are repeated, the last one takes precedence.

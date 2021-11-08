@@ -16,18 +16,7 @@
 
 package org.litote.kmongo
 
-import com.mongodb.client.model.DeleteManyModel
-import com.mongodb.client.model.DeleteOneModel
-import com.mongodb.client.model.DeleteOptions
-import com.mongodb.client.model.FindOneAndUpdateOptions
-import com.mongodb.client.model.InsertOneModel
-import com.mongodb.client.model.PushOptions
-import com.mongodb.client.model.ReplaceOneModel
-import com.mongodb.client.model.ReplaceOptions
-import com.mongodb.client.model.UpdateManyModel
-import com.mongodb.client.model.UpdateOneModel
-import com.mongodb.client.model.UpdateOptions
-import com.mongodb.client.model.Updates
+import com.mongodb.client.model.*
 import org.bson.conversions.Bson
 import kotlin.internal.OnlyInputTypes
 import kotlin.reflect.KProperty
@@ -65,7 +54,7 @@ fun combine(updates: List<Bson>): Bson = Updates.combine(updates)
  * @return the update
  * @mongodb.driver.manual reference/operator/update/set/ $set
  */
-fun <@OnlyInputTypes T> setValue(property: KProperty<T?>, value: T?): Bson = Updates.set(property.path(), value)
+inline fun <@OnlyInputTypes reified T> setValue(property: KProperty<T?>, value: T?): Bson = Updates.set(property.path(), value)
 
 
 /**
@@ -76,7 +65,7 @@ fun <@OnlyInputTypes T> setValue(property: KProperty<T?>, value: T?): Bson = Upd
  * @mongodb.driver.manual reference/operator/update/set/ $set
  */
 fun set(vararg properties: SetTo<*>): Bson =
-    combine(properties.map { setValue(it.property, it.value) })
+        combine(properties.map { setValue(it.property, it.value) })
 
 /**
  * Creates an update that deletes the property with the given name.
@@ -85,7 +74,7 @@ fun set(vararg properties: SetTo<*>): Bson =
  * @return the update
  * @mongodb.driver.manual reference/operator/update/unset/ $unset
  */
-fun <T> unset(property: KProperty<T>): Bson = Updates.unset(property.path())
+inline fun <reified T> unset(property: KProperty<T>): Bson = Updates.unset(property.path())
 
 /**
  * Creates an update that sets the value of the property to the given value, but only if the update is an upsert that
@@ -98,8 +87,8 @@ fun <T> unset(property: KProperty<T>): Bson = Updates.unset(property.path())
  * @mongodb.driver.manual reference/operator/update/setOnInsert/ $setOnInsert
  * @see UpdateOptions#upsert(boolean)
  */
-fun <@OnlyInputTypes T> setOnInsert(property: KProperty<T?>, value: T): Bson =
-    Updates.setOnInsert(property.path(), value)
+inline fun <@OnlyInputTypes reified T> setOnInsert(property: KProperty<T?>, value: T): Bson =
+        Updates.setOnInsert(property.path(), value)
 
 /**
  * Creates an update that renames a field.
@@ -109,8 +98,8 @@ fun <@OnlyInputTypes T> setOnInsert(property: KProperty<T?>, value: T): Bson =
  * @return the update
  * @mongodb.driver.manual reference/operator/update/rename/ $rename
  */
-fun <@OnlyInputTypes T> rename(property: KProperty<T?>, newProperty: KProperty<T>): Bson =
-    Updates.rename(property.path(), newProperty.path())
+inline fun <@OnlyInputTypes reified T> rename(property: KProperty<T?>, newProperty: KProperty<T>): Bson =
+        Updates.rename(property.path(), newProperty.path())
 
 /**
  * Creates an update that increments the value of the property by the given value.
@@ -120,7 +109,7 @@ fun <@OnlyInputTypes T> rename(property: KProperty<T?>, newProperty: KProperty<T
  * @return the update
  * @mongodb.driver.manual reference/operator/update/inc/ $inc
  */
-fun <T : Number?> inc(property: KProperty<T>, number: Number): Bson = Updates.inc(property.path(), number)
+inline fun <reified T : Number?> inc(property: KProperty<T>, number: Number): Bson = Updates.inc(property.path(), number)
 
 /**
  * Creates an update that multiplies the value of the property by the given number.
@@ -130,7 +119,7 @@ fun <T : Number?> inc(property: KProperty<T>, number: Number): Bson = Updates.in
  * @return the update
  * @mongodb.driver.manual reference/operator/update/mul/ $mul
  */
-fun <T : Number?> mul(property: KProperty<T>, number: Number): Bson = Updates.mul(property.path(), number)
+inline fun <reified T : Number?> mul(property: KProperty<T>, number: Number): Bson = Updates.mul(property.path(), number)
 
 /**
  * Creates an update that sets the value of the property if the given value is less than the current value of the
@@ -142,7 +131,7 @@ fun <T : Number?> mul(property: KProperty<T>, number: Number): Bson = Updates.mu
  * @return the update
  * @mongodb.driver.manual reference/operator/update/min/ $min
  */
-fun <@OnlyInputTypes T> min(property: KProperty<T>, value: T): Bson = Updates.min(property.path(), value)
+inline fun <@OnlyInputTypes reified T> min(property: KProperty<T>, value: T): Bson = Updates.min(property.path(), value)
 
 /**
  * Creates an update that sets the value of the property if the given value is greater than the current value of the
@@ -154,7 +143,7 @@ fun <@OnlyInputTypes T> min(property: KProperty<T>, value: T): Bson = Updates.mi
  * @return the update
  * @mongodb.driver.manual reference/operator/update/min/ $min
  */
-fun <@OnlyInputTypes T> max(property: KProperty<T>, value: T): Bson = Updates.max(property.path(), value)
+inline fun <@OnlyInputTypes reified T> max(property: KProperty<T>, value: T): Bson = Updates.max(property.path(), value)
 
 /**
  * Creates an update that sets the value of the property to the current date as a BSON date.
@@ -164,7 +153,7 @@ fun <@OnlyInputTypes T> max(property: KProperty<T>, value: T): Bson = Updates.ma
  * @mongodb.driver.manual reference/operator/update/currentDate/ $currentDate
  * @mongodb.driver.manual reference/bson-types/#date Date
  */
-fun <T> currentDate(property: KProperty<T>): Bson = Updates.currentDate(property.path())
+inline fun <reified T> currentDate(property: KProperty<T>): Bson = Updates.currentDate(property.path())
 
 /**
  * Creates an update that sets the value of the property to the current date as a BSON timestamp.
@@ -174,7 +163,7 @@ fun <T> currentDate(property: KProperty<T>): Bson = Updates.currentDate(property
  * @mongodb.driver.manual reference/operator/update/currentDate/ $currentDate
  * @mongodb.driver.manual reference/bson-types/#document-bson-type-timestamp Timestamp
  */
-fun <T> currentTimestamp(property: KProperty<T>): Bson = Updates.currentTimestamp(property.path())
+inline fun <reified T> currentTimestamp(property: KProperty<T>): Bson = Updates.currentTimestamp(property.path())
 
 /**
  * Creates an update that adds the given value to the array value of the property, unless the value is
@@ -187,7 +176,7 @@ fun <T> currentTimestamp(property: KProperty<T>): Bson = Updates.currentTimestam
  * @mongodb.driver.manual reference/operator/update/addToSet/ $addToSet
  */
 fun <@OnlyInputTypes T> addToSet(property: KProperty<Iterable<T>?>, value: T): Bson =
-    Updates.addToSet(property.path(), value)
+        Updates.addToSet(property.path(), value)
 
 /**
  * Creates an update that adds each of the given values to the array value of the property, unless the value is
@@ -200,7 +189,7 @@ fun <@OnlyInputTypes T> addToSet(property: KProperty<Iterable<T>?>, value: T): B
  * @mongodb.driver.manual reference/operator/update/addToSet/ $addToSet
  */
 fun <@OnlyInputTypes T> addEachToSet(property: KProperty<Iterable<T>?>, values: List<T>): Bson =
-    Updates.addEachToSet(property.path(), values)
+        Updates.addEachToSet(property.path(), values)
 
 /**
  * Creates an update that adds the given value to the array value of the property.
@@ -225,11 +214,11 @@ fun <@OnlyInputTypes T> push(property: KProperty<Iterable<T>?>, value: T): Bson 
  * @mongodb.driver.manual reference/operator/update/push/ $push
  */
 fun <@OnlyInputTypes T> pushEach(
-    property: KProperty<Iterable<T>?>,
-    values: List<T?>,
-    options: PushOptions = PushOptions()
+        property: KProperty<Iterable<T>?>,
+        values: List<T?>,
+        options: PushOptions = PushOptions()
 ): Bson =
-    Updates.pushEach(property.path(), values, options)
+        Updates.pushEach(property.path(), values, options)
 
 /**
  * Creates an update that removes all instances of the given value from the array value of the property.
@@ -271,7 +260,7 @@ fun pullByFilter(filter: Bson): Bson = Updates.pullByFilter(filter)
  * @mongodb.driver.manual reference/operator/update/pull/ $pull
  */
 fun <@OnlyInputTypes T> pullAll(property: KProperty<Iterable<T>?>, values: List<T?>?): Bson =
-    Updates.pullAll(property.path(), values ?: emptyList())
+        Updates.pullAll(property.path(), values ?: emptyList())
 
 /**
  * Creates an update that pops the first element of an array that is the value of the property.
@@ -280,7 +269,7 @@ fun <@OnlyInputTypes T> pullAll(property: KProperty<Iterable<T>?>, values: List<
  * @return the update
  * @mongodb.driver.manual reference/operator/update/pop/ $pop
  */
-fun <T> popFirst(property: KProperty<T>): Bson = Updates.popFirst(property.path())
+inline fun <reified T> popFirst(property: KProperty<T>): Bson = Updates.popFirst(property.path())
 
 /**
  * Creates an update that pops the last element of an array that is the value of the property.
@@ -289,7 +278,7 @@ fun <T> popFirst(property: KProperty<T>): Bson = Updates.popFirst(property.path(
  * @return the update
  * @mongodb.driver.manual reference/operator/update/pop/ $pop
  */
-fun <T> popLast(property: KProperty<T>): Bson = Updates.popLast(property.path())
+inline fun <reified T> popLast(property: KProperty<T>): Bson = Updates.popLast(property.path())
 
 /**
  * Creates an update that performs a bitwise and between the given integer value and the integral value of the property.
@@ -298,7 +287,7 @@ fun <T> popLast(property: KProperty<T>): Bson = Updates.popLast(property.path())
  * @param value     the value
  * @return the update
  */
-fun <T : Number?> bitwiseAnd(property: KProperty<T>, value: Int): Bson = Updates.bitwiseAnd(property.path(), value)
+inline fun <reified T : Number?> bitwiseAnd(property: KProperty<T>, value: Int): Bson = Updates.bitwiseAnd(property.path(), value)
 
 /**
  * Creates an update that performs a bitwise and between the given long value and the integral value of the property.
@@ -308,7 +297,7 @@ fun <T : Number?> bitwiseAnd(property: KProperty<T>, value: Int): Bson = Updates
  * @return the update
  * @mongodb.driver.manual reference/operator/update/bit/ $bit
  */
-fun <T : Number?> bitwiseAnd(property: KProperty<T>, value: Long): Bson = Updates.bitwiseAnd(property.path(), value)
+inline fun <reified T : Number?> bitwiseAnd(property: KProperty<T>, value: Long): Bson = Updates.bitwiseAnd(property.path(), value)
 
 /**
  * Creates an update that performs a bitwise or between the given integer value and the integral value of the property.
@@ -318,7 +307,7 @@ fun <T : Number?> bitwiseAnd(property: KProperty<T>, value: Long): Bson = Update
  * @return the update
  * @mongodb.driver.manual reference/operator/update/bit/ $bit
  */
-fun <T : Number?> bitwiseOr(property: KProperty<T>, value: Int): Bson = Updates.bitwiseOr(property.path(), value)
+inline fun <reified T : Number?> bitwiseOr(property: KProperty<T>, value: Int): Bson = Updates.bitwiseOr(property.path(), value)
 
 /**
  * Creates an update that performs a bitwise or between the given long value and the integral value of the property.
@@ -328,7 +317,7 @@ fun <T : Number?> bitwiseOr(property: KProperty<T>, value: Int): Bson = Updates.
  * @return the update
  * @mongodb.driver.manual reference/operator/update/bit/ $bit
  */
-fun <T : Number?> bitwiseOr(property: KProperty<T>, value: Long): Bson = Updates.bitwiseOr(property.path(), value)
+inline fun <reified T : Number?> bitwiseOr(property: KProperty<T>, value: Long): Bson = Updates.bitwiseOr(property.path(), value)
 
 /**
  * Creates an update that performs a bitwise xor between the given integer value and the integral value of the property.
@@ -337,7 +326,7 @@ fun <T : Number?> bitwiseOr(property: KProperty<T>, value: Long): Bson = Updates
  * @param value     the value
  * @return the update
  */
-fun <T : Number?> bitwiseXor(property: KProperty<T>, value: Int): Bson = Updates.bitwiseXor(property.path(), value)
+inline fun <reified T : Number?> bitwiseXor(property: KProperty<T>, value: Int): Bson = Updates.bitwiseXor(property.path(), value)
 
 /**
  * Creates an update that performs a bitwise xor between the given long value and the integral value of the property.
@@ -346,7 +335,7 @@ fun <T : Number?> bitwiseXor(property: KProperty<T>, value: Int): Bson = Updates
  * @param value     the value
  * @return the update
  */
-fun <T : Number?> bitwiseXor(property: KProperty<T>, value: Long): Bson = Updates.bitwiseXor(property.path(), value)
+inline fun <reified T : Number?> bitwiseXor(property: KProperty<T>, value: Long): Bson = Updates.bitwiseXor(property.path(), value)
 
 /**
  * Creates an InsertOneModel.
@@ -357,31 +346,31 @@ fun <T> insertOne(document: T): InsertOneModel<T> = InsertOneModel(document)
  * Creates an UpdateOneModel.
  */
 fun <T> updateOne(filter: Bson, update: Bson, options: UpdateOptions = UpdateOptions()): UpdateOneModel<T> =
-    UpdateOneModel(filter, update, options)
+        UpdateOneModel(filter, update, options)
 
 /**
  * Creates an UpdateManyModel.
  */
 fun <T> updateMany(filter: Bson, update: Bson, options: UpdateOptions = UpdateOptions()): UpdateManyModel<T> =
-    UpdateManyModel(filter, update, options)
+        UpdateManyModel(filter, update, options)
 
 /**
  * Creates an ReplaceOneModel.
  */
 fun <T> replaceOne(filter: Bson, replacement: T, options: ReplaceOptions = ReplaceOptions()): ReplaceOneModel<T> =
-    ReplaceOneModel(filter, replacement, options)
+        ReplaceOneModel(filter, replacement, options)
 
 /**
  * Creates an DeleteOneModel.
  */
 fun <T> deleteOne(filter: Bson, options: DeleteOptions = DeleteOptions()): DeleteOneModel<T> =
-    DeleteOneModel(filter, options)
+        DeleteOneModel(filter, options)
 
 /**
  * Creates an DeleteManyModel.
  */
 fun <T> deleteMany(filter: Bson, options: DeleteOptions = DeleteOptions()): DeleteManyModel<T> =
-    DeleteManyModel(filter, options)
+        DeleteManyModel(filter, options)
 
 /**
  * Creates an [UpdateOptions] and set upsert to true.

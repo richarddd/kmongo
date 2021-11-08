@@ -82,7 +82,7 @@ fun geo2dsphere(properties: Iterable<KProperty<*>>): Bson = Indexes.geo2dsphere(
  * @return the index specification
  * @mongodb.driver.manual core/text text index
  */
-fun <T> KProperty<T>.textIndex(): Bson = Indexes.text(path())
+inline fun <reified T> KProperty<T>.textIndex(): Bson = Indexes.text(path())
 
 /**
  * Create an index key for a hashed index on the given property.
@@ -90,7 +90,7 @@ fun <T> KProperty<T>.textIndex(): Bson = Indexes.text(path())
  * @return the index specification
  * @mongodb.driver.manual core/hashed hashed index
  */
-fun <T> KProperty<T>.hashedIndex(): Bson = Indexes.hashed(path())
+inline fun <reified T> KProperty<T>.hashedIndex(): Bson = Indexes.hashed(path())
 
 /**
  * Create a compound index specifications.  If any properties are repeated, the last one takes precedence.
@@ -100,7 +100,7 @@ fun <T> KProperty<T>.hashedIndex(): Bson = Indexes.hashed(path())
  * @mongodb.driver.manual core/index-compound compoundIndex
  */
 fun index(vararg properties: Pair<KProperty<*>, Boolean>): Bson =
-    index(properties.toMap())
+        index(properties.toMap())
 
 /**
  * Create a compound multiple index specifications.
@@ -111,4 +111,4 @@ fun index(vararg properties: Pair<KProperty<*>, Boolean>): Bson =
  * @mongodb.driver.manual core/index-compound compoundIndex
  */
 fun index(properties: Map<KProperty<*>, Boolean>): Bson =
-    Indexes.compoundIndex(properties.map { BsonDocument(it.key.path(), BsonInt32(if (it.value) 1 else -1)) })
+        Indexes.compoundIndex(properties.map { BsonDocument(it.key.path(), BsonInt32(if (it.value) 1 else -1)) })

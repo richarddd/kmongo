@@ -206,7 +206,7 @@ internal class JacksonClassMappingTypeService : ClassMappingTypeService {
         return CodecRegistries.fromProviders(KMongoConfiguration.jacksonCodecProvider)
     }
 
-    override fun <T> calculatePath(property: KProperty<T>): String {
+    override fun <T> calculatePath(property: KProperty<T>, clazz: Class<T>): String {
         val owner = property.javaField?.declaringClass
                 ?: try {
                     property.javaGetter?.declaringClass

@@ -101,7 +101,7 @@ class SerializationClassMappingTypeService : ClassMappingTypeService {
 
     override fun coreCodecRegistry(): CodecRegistry = coreCodecRegistry
 
-    override fun <T> calculatePath(property: KProperty<T>): String =
+    override fun <T> calculatePath(property: KProperty<T>, clazz: Class<T>): String =
         if (property.hasAnnotation<MongoId>()) "_id"
         else property.findAnnotation<MongoProperty>()?.value ?: property.name
 }

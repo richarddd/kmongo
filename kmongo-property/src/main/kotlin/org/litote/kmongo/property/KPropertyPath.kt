@@ -17,6 +17,7 @@
 package org.litote.kmongo.property
 
 import org.litote.kmongo.path
+import org.litote.kmongo.service.ClassMappingType
 import kotlin.reflect.KParameter
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KType
@@ -31,24 +32,38 @@ import kotlin.reflect.KVisibility
  */
 open class KPropertyPath<T, R>(
     private val previous: KPropertyPath<T, *>?,
-    private val property: KProperty1<*, R?>
+    private val property: KProperty1<*, R?>,
+    val propertyClass: Class<*>? = null,
+    val additionalClass: Class<*>? = null
 ) : KProperty1<T, R> {
 
+    @PublishedApi
     @Suppress("UNCHECKED_CAST")
-    internal constructor(previous: KProperty1<*, Any?>, property: KProperty1<*, R?>) :
-            this(
-                if (property is KPropertyPath<*, *>)
-                    property as KPropertyPath<T, *>?
-                else
-                    KPropertyPath<T, Any?>(
-                        null as (KPropertyPath<T, *>?),
-                        previous
-                    ),
-                property
-            )
+    internal constructor(
+        previous: KProperty1<*, Any?>,
+        property: KProperty1<*, R?>,
+        propertyClass: Class<R>,
+        additionalClass: Class<*>? = null
+    ) :
+        this(
+            if (property is KPropertyPath<*, *>)
+                property as KPropertyPath<T, *>?
+            else
+                KPropertyPath<T, Any?>(
+                    null as (KPropertyPath<T, *>?),
+                    previous
+                ),
+            property,
+            propertyClass
+        )
 
-    internal val path: String
-        get() = "${previous?.path?.let { "$it." } ?: ""}${property.path()}"
+    fun path(): String = "${previous?.path()?.let { "$it." } ?: ""}${
+        ((property as? KPropertyPath<*, *>)?.path()) ?: ((property as? CustomProperty<*, *>)?.path()) ?: ClassMappingType.getPath(
+            property,
+            propertyClass as? Class<R?>,
+            additionalClass
+        )
+    }"
 
     override val annotations: List<Annotation> get() = property.annotations
     override val getter: KProperty1.Getter<T, R> get() = notImplemented()
@@ -58,7 +73,7 @@ open class KPropertyPath<T, R>(
     override val isLateinit: Boolean get() = previous?.isLateinit ?: false && property.isLateinit
     override val isOpen: Boolean get() = previous?.isOpen ?: false && property.isOpen
     override val isSuspend: Boolean get() = property.isSuspend
-    override val name: String get() = path
+    override val name: String get() = path()
     override val parameters: List<KParameter> get() = property.parameters
     override val returnType: KType get() = property.returnType
     override val typeParameters: List<KTypeParameter> get() = property.typeParameters
@@ -108,8 +123,9 @@ open class KPropertyPath<T, R>(
  */
 open class KCollectionPropertyPath<T, R, MEMBER : KPropertyPath<T, R?>>(
     previous: KPropertyPath<T, *>?,
-    property: KProperty1<*, Iterable<R>?>
-) : KPropertyPath<T, Iterable<R>?>(previous, property) {
+    property: KProperty1<*, Iterable<R>?>,
+    private val valueClass: Class<R>,
+) : KPropertyPath<T, Iterable<R>?>(previous, property, valueClass, Iterable::class.java) {
 
     /**
      * To be overridden to returns the right type.
@@ -118,7 +134,9 @@ open class KCollectionPropertyPath<T, R, MEMBER : KPropertyPath<T, R?>>(
     open fun memberWithAdditionalPath(additionalPath: String): MEMBER =
         KPropertyPath<T, R>(
             this as KProperty1<T, Collection<R>?>,
-            customProperty(this as KPropertyPath<*, T>, additionalPath)
+            customProperty(this as KPropertyPath<*, T>, additionalPath),
+            valueClass,
+            Iterable::class.java
         ) as MEMBER
 
     /**
@@ -142,16 +160,19 @@ open class KCollectionPropertyPath<T, R, MEMBER : KPropertyPath<T, R?>>(
  */
 class KCollectionSimplePropertyPath<T, R>(
     previous: KPropertyPath<T, *>?,
-    property: KProperty1<*, Iterable<R>?>
-) : KCollectionPropertyPath<T, R, KPropertyPath<T, R?>>(previous, property)
+    property: KProperty1<*, Iterable<R>?>,
+    valueClass: Class<R>
+) : KCollectionPropertyPath<T, R, KPropertyPath<T, R?>>(previous, property, valueClass)
 
 /**
  * Base class for map property path.
  */
 open class KMapPropertyPath<T, K, R, MEMBER : KPropertyPath<T, R?>>(
     previous: KPropertyPath<T, *>?,
-    property: KProperty1<*, Map<out K, R>?>
-) : KPropertyPath<T, Map<out K?, R>?>(previous, property) {
+    property: KProperty1<*, Map<out K, R>?>,
+    private val keyClass: Class<K>,
+    private val valueClass: Class<R>
+) : KPropertyPath<T, Map<out K?, R>?>(previous, property, valueClass, keyClass) {
 
     /**
      * To be overridden to returns the right type.
@@ -160,7 +181,9 @@ open class KMapPropertyPath<T, K, R, MEMBER : KPropertyPath<T, R?>>(
     open fun memberWithAdditionalPath(additionalPath: String): MEMBER =
         KPropertyPath<T, R>(
             this as KProperty1<T, Collection<R>?>,
-            customProperty(this as KPropertyPath<*, T>, additionalPath)
+            customProperty(this as KPropertyPath<*, T>, additionalPath),
+            valueClass,
+            keyClass
         ) as MEMBER
 
     /**
@@ -175,5 +198,7 @@ open class KMapPropertyPath<T, K, R, MEMBER : KPropertyPath<T, R?>>(
  */
 class KMapSimplePropertyPath<T, K, R>(
     previous: KPropertyPath<T, *>?,
-    property: KProperty1<*, Map<out K, R>?>
-) : KMapPropertyPath<T, K, R, KPropertyPath<T, R?>>(previous, property)
+    property: KProperty1<*, Map<out K, R>?>,
+    keyClass: Class<K>,
+    valueClass: Class<R>,
+) : KMapPropertyPath<T, K, R, KPropertyPath<T, R?>>(previous, property, keyClass, valueClass)

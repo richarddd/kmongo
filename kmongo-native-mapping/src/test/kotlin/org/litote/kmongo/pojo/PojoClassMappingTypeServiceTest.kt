@@ -19,6 +19,7 @@ package org.litote.kmongo.pojo
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.codecs.pojo.annotations.BsonProperty
 import org.junit.Test
+import org.litote.kmongo.service.getPath
 import kotlin.test.assertEquals
 
 /**
@@ -32,12 +33,12 @@ class PojoClassMappingTypeServiceTest {
     fun `getPath handles well @JsonProperty and @BsonId`() {
         val service = PojoClassMappingTypeService()
         assertEquals(
-            "other",
-            service.getPath(AnnotatedData::property)
+                "other",
+                service.getPath(AnnotatedData::property)
         )
         assertEquals(
-            "_id",
-            service.getPath(AnnotatedData::key)
+                "_id",
+                service.getPath(AnnotatedData::key)
         )
     }
 }

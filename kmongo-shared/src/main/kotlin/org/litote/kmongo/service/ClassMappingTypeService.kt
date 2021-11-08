@@ -21,8 +21,8 @@ import org.bson.codecs.Codec
 import org.bson.codecs.configuration.CodecProvider
 import org.bson.codecs.configuration.CodecRegistries
 import org.bson.codecs.configuration.CodecRegistry
+import java.lang.reflect.Field
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.internal.ReflectProperties.lazySoft
@@ -30,7 +30,7 @@ import kotlin.reflect.jvm.internal.ReflectProperties.lazySoft
 private val disablePathCache = System.getProperty("org.litote.kmongo.disablePathCache") == "true"
 
 internal val pathCache: MutableMap<String, String>
-        by lazySoft { ConcurrentHashMap<String, String>() }
+    by lazySoft { ConcurrentHashMap<String, String>() }
 
 private val kPropertyPathClass =
     try {
@@ -66,7 +66,7 @@ interface ClassMappingTypeService {
 
     fun toExtendedJson(obj: Any?): String
 
-    fun findIdProperty(type: KClass<*>): KProperty1<*, *>?
+    fun findIdProperty(type: Class<*>): Field?
 
     fun <T, R> getIdValue(idProperty: KProperty1<T, R>, instance: T): R?
 
@@ -88,22 +88,32 @@ interface ClassMappingTypeService {
 
     fun coreCodecRegistry(): CodecRegistry
 
-    fun <T> getPath(property: KProperty<T>): String {
+    fun <T> getPath(property: KProperty<T>, propertyClass: Class<T>?, additionalClass: Class<*>? = null): String {
         //sanity check
         if (kPropertyPathClass?.isInstance(property) == true) {
-            return calculatePath(property)
+            return calculatePath(property, propertyClass)
         }
         //the idea is that KProperties are usually generated as (java) anonymous class
         //so we can safely store them as class name
         //we check that class package does not start with kotlin to avoid corner cases
-        val javaClassName = property.javaClass.name
-        return if (disablePathCache || javaClassName.startsWith("kotlin") || javaClassName == "org.litote.kmongo.property.KPropertyPath\$Companion\$CustomProperty") {
-            calculatePath(property)
-        } else {
-            pathCache.getOrPut(javaClassName) { calculatePath(property) }
-        }
 
+        return if (disablePathCache || propertyClass?.name == Any::class.java.name || propertyClass?.name?.startsWith("kotlin") == true || propertyClass?.name == "org.litote.kmongo.property.KPropertyPath\$Companion\$CustomProperty" || propertyClass == null) {
+            calculatePath(property, propertyClass)
+        } else {
+
+            val cacheKey = additionalClass?.let {
+                if (it.isAssignableFrom(Iterable::class.java)) {
+                    "Iterable<${propertyClass.name}>"
+                } else {
+                    "Map<${additionalClass.name},${propertyClass.name}>"
+                }
+            } ?: propertyClass.name
+            pathCache.getOrPut(cacheKey) { calculatePath(property, propertyClass) }
+        }
     }
 
-    fun <T> calculatePath(property: KProperty<T>): String
+    fun <T> calculatePath(property: KProperty<T>, clazz: Class<T>?): String
 }
+
+inline fun <reified T> ClassMappingTypeService.getPath(property: KProperty<T>): String =
+    this.calculatePath(property, T::class.java)

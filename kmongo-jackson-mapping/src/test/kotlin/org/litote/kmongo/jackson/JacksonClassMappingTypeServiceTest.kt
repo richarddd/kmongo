@@ -19,6 +19,7 @@ package org.litote.kmongo.jackson
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.bson.codecs.pojo.annotations.BsonId
 import org.junit.Test
+import org.litote.kmongo.service.getPath
 import kotlin.test.assertEquals
 
 /**

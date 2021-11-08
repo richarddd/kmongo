@@ -26,61 +26,61 @@ import kotlin.reflect.KProperty1
 /**
  * Returns a composed property. For example Friend.address / Address.postalCode = "address.postalCode".
  */
-operator fun <T0, T1, T2> KProperty1<T0, T1?>.div(p2: KProperty1<T1, T2?>): KProperty1<T0, T2?> =
-    KPropertyPath(this, p2)
+inline operator fun <T0, T1, reified T2> KProperty1<T0, T1?>.div(p2: KProperty1<T1, T2?>): KProperty1<T0, T2?> =
+    KPropertyPath(this, p2, T2::class.java)
 
 /**
  * Returns a collection composed property. For example Friend.addresses / Address.postalCode = "addresses.postalCode".
  */
 @JvmName("divCol")
-operator fun <T0, T1, T2> KProperty1<T0, Iterable<T1>?>.div(p2: KProperty1<T1, T2?>): KProperty1<T0, T2?> =
-    KPropertyPath(this, p2)
+inline operator fun <T0, T1, reified T2> KProperty1<T0, Iterable<T1>?>.div(p2: KProperty1<T1, T2?>): KProperty1<T0, T2?> =
+    KPropertyPath(this, p2, T2::class.java)
 
 /**
  * Returns a map composed property. For example Friend.addresses / Address.postalCode = "addresses.postalCode".
  */
 @JvmName("divMap")
-operator fun <T0, K, T1, T2> KProperty1<T0, Map<out K, T1>?>.div(p2: KProperty1<T1, T2?>): KProperty1<T0, T2?> =
-    KPropertyPath(this, p2)
+inline operator fun <T0, K, T1, reified T2> KProperty1<T0, Map<out K, T1>?>.div(p2: KProperty1<T1, T2?>): KProperty1<T0, T2?> =
+    KPropertyPath(this, p2, T2::class.java)
 
 /**
  * Returns a mongo path of a property.
  */
-fun <T> KProperty<T>.path(): String =
-    (this as? KPropertyPath<*, T>)?.path ?: ClassMappingType.getPath(this)
+inline fun <reified T> KProperty<T>.path(): String =
+    (this as? KPropertyPath<*, T>)?.path() ?: ClassMappingType.getPath(this, T::class.java)
 
 /**
  * Returns a collection property.
  */
-val <T> KProperty1<out Any?, Iterable<T>?>.colProperty: KCollectionSimplePropertyPath<out Any?, T>
-    get() = KCollectionSimplePropertyPath(null, this)
-
+inline fun <reified T, R> KProperty1<out R, Iterable<T>?>.colProperty(): KCollectionSimplePropertyPath<R, T> =
+    KCollectionSimplePropertyPath(null, this, T::class.java)
 
 /**
  * Returns a map property.
  */
-val <K, T> KProperty1<out Any?, Map<out K, T>?>.mapProperty: KMapSimplePropertyPath<out Any?, K, T>
-    get() = KMapSimplePropertyPath(null, this)
+inline fun <reified K, reified T> KProperty1<out Any?, Map<out K, T>?>.mapProperty(): KMapSimplePropertyPath<out Any?, K, T> =
+    KMapSimplePropertyPath(null, this, K::class.java, T::class.java)
 
 /**
  * [The positional array operator $ (projection or update)](https://docs.mongodb.com/manual/reference/operator/update/positional/)
  */
-val <T> KProperty1<out Any?, Iterable<T>?>.posOp: KPropertyPath<out Any?, T?> get() = colProperty.posOp
+inline fun <reified T> KProperty1<out Any?, Iterable<T>?>.posOp(): KPropertyPath<out Any?, T?> = colProperty().posOp
 
 /**
  * [The all positional operator $[]](https://docs.mongodb.com/manual/reference/operator/update/positional-all/)
  */
-val <T> KProperty1<out Any?, Iterable<T>?>.allPosOp: KPropertyPath<out Any?, T?> get() = colProperty.allPosOp
+inline fun <reified T> KProperty1<out Any?, Iterable<T>?>.allPosOp(): KPropertyPath<out Any?, T?> =
+    colProperty().allPosOp
 
 /**
  * [The filtered positional operator $[<identifier>]](https://docs.mongodb.com/manual/reference/operator/update/positional-filtered/)
  */
-fun <T> KProperty1<out Any?, Iterable<T>?>.filteredPosOp(identifier: String): KPropertyPath<out Any?, T?> =
-    colProperty.filteredPosOp(identifier)
+inline fun <reified T> KProperty1<out Any?, Iterable<T>?>.filteredPosOp(identifier: String): KPropertyPath<out Any?, T?> =
+    colProperty().filteredPosOp(identifier)
 
 /**
  * Key projection of map.
  * Sample: `p.keyProjection(Locale.ENGLISH) / Gift::amount`
  */
-fun <K, T> KProperty1<out Any?, Map<out K, T>?>.keyProjection(key: K): KPropertyPath<out Any?, T?> =
-    mapProperty.keyProjection(key)
+inline fun <reified K, reified T> KProperty1<out Any?, Map<out K, T>?>.keyProjection(key: K): KPropertyPath<out Any?, T?> =
+    mapProperty().keyProjection(key)

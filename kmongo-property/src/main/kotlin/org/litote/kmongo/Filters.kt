@@ -37,7 +37,7 @@ import kotlin.reflect.KProperty
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/eq $eq
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.eq(value: T?): Bson = Filters.eq(path(), value)
+inline infix fun <@OnlyInputTypes reified T> KProperty<T?>.eq(value: T?): Bson = Filters.eq(path(), value)
 
 /**
  * Creates a filter that matches all documents where the value of the property contains the specified value. Note that this doesn't
@@ -53,7 +53,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.eq(value: T?): Bson = Filters.eq(pat
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/eq/#op._S_eq
  */
-infix fun <@OnlyInputTypes T> KProperty<Iterable<T?>?>.contains(value: T?): Bson = Filters.eq(path(), value)
+inline fun <@OnlyInputTypes reified T> KProperty<Iterable<T?>?>.contains(value: T?): Bson = Filters.eq(path(), value)
 
 /**
  * Creates a filter that matches all documents where the value of the field name does not equal the specified value.
@@ -63,7 +63,7 @@ infix fun <@OnlyInputTypes T> KProperty<Iterable<T?>?>.contains(value: T?): Bson
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/ne $ne
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.ne(value: T?): Bson = Filters.ne(path(), value)
+inline fun <@OnlyInputTypes reified T> KProperty<T?>.ne(value: T?): Bson = Filters.ne(path(), value)
 
 /**
  * Creates a filter that matches all documents where the value of the given property is less than the specified value.
@@ -73,7 +73,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.ne(value: T?): Bson = Filters.ne(pat
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/lt $lt
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.lt(item: T): Bson = Filters.lt(path(), item)
+inline fun <@OnlyInputTypes reified T> KProperty<T?>.lt(item: T): Bson = Filters.lt(path(), item)
 
 /**
  * Creates a filter that matches all documents where the value of the given property is greater than the specified value.
@@ -83,7 +83,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.lt(item: T): Bson = Filters.lt(path(
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/gt $gt
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.gt(value: T): Bson = Filters.gt(path(), value)
+inline fun <@OnlyInputTypes reified T> KProperty<T?>.gt(value: T): Bson = Filters.gt(path(), value)
 
 /**
  * Creates a filter that matches all documents where the value of the given property is less than or equal to the specified value.
@@ -93,7 +93,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.gt(value: T): Bson = Filters.gt(path
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/lte $lte
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.lte(value: T): Bson = Filters.lte(path(), value)
+inline fun <@OnlyInputTypes reified T> KProperty<T?>.lte(value: T): Bson = Filters.lte(path(), value)
 
 /**
  * Creates a filter that matches all documents where the value of the given property is greater than or equal to the specified value.
@@ -103,7 +103,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.lte(value: T): Bson = Filters.lte(pa
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/gte $gte
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.gte(value: T): Bson = Filters.gte(path(), value)
+inline fun <@OnlyInputTypes reified T> KProperty<T?>.gte(value: T): Bson = Filters.gte(path(), value)
 
 /**
  * Creates a filter that matches all documents where the value of a property equals any value in the list of specified values.
@@ -113,7 +113,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.gte(value: T): Bson = Filters.gte(pa
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/in $in
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.`in`(values: Iterable<T?>): Bson = Filters.`in`(path(), values)
+inline fun <@OnlyInputTypes reified T> KProperty<T?>.`in`(values: Iterable<T?>): Bson = Filters.`in`(path(), values)
 
 /**
  * Creates a filter that matches all documents where the value of a property equals any value in the list of specified values.
@@ -123,7 +123,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.`in`(values: Iterable<T?>): Bson = F
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/in $in
  */
-infix fun <T> KProperty<T>.`in`(expression: String): Bson = Filters.`in`(path(), expression)
+inline fun <reified T> KProperty<T>.`in`(expression: String): Bson = Filters.`in`(path(), expression)
 
 /**
  * Creates a filter that matches all documents where the value of a property equals any value in the list of specified values.
@@ -134,7 +134,7 @@ infix fun <T> KProperty<T>.`in`(expression: String): Bson = Filters.`in`(path(),
  * @mongodb.driver.manual reference/operator/query/in $in
  */
 @JvmName("inArray")
-infix fun <@OnlyInputTypes T> KProperty<Iterable<T>?>.`in`(values: Iterable<T?>): Bson = Filters.`in`(path(), values)
+inline infix fun <@OnlyInputTypes reified T> KProperty<Iterable<T>?>.`in`(values: Iterable<T?>): Bson = Filters.`in`(path(), values)
 
 /**
  * Creates a filter that matches all documents where the value of a property does not equal any of the specified values or does not exist.
@@ -144,7 +144,7 @@ infix fun <@OnlyInputTypes T> KProperty<Iterable<T>?>.`in`(values: Iterable<T?>)
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/nin $nin
  */
-infix fun <@OnlyInputTypes T> KProperty<T?>.nin(values: Iterable<T?>): Bson = Filters.nin(path(), values)
+inline fun <@OnlyInputTypes reified T> KProperty<T?>.nin(values: Iterable<T?>): Bson = Filters.nin(path(), values)
 
 /**
  * Creates a filter that matches all documents where the value of a property does not equal any of the specified values or does not exist.
@@ -155,7 +155,7 @@ infix fun <@OnlyInputTypes T> KProperty<T?>.nin(values: Iterable<T?>): Bson = Fi
  * @mongodb.driver.manual reference/operator/query/nin $nin
  */
 @JvmName("ninArray")
-infix fun <@OnlyInputTypes T> KProperty<Iterable<T>?>.nin(values: Iterable<T?>): Bson = Filters.nin(path(), values)
+inline infix fun <@OnlyInputTypes reified T> KProperty<Iterable<T>?>.nin(values: Iterable<T?>): Bson = Filters.nin(path(), values)
 
 
 /**
@@ -218,15 +218,15 @@ fun or(filters: Iterable<Bson?>): Bson = combineFilters(Filters::or, filters)
 fun or(vararg filters: Bson?): Bson = or(filters.toList())
 
 internal fun combineFilters(combiner: (List<Bson>) -> Bson, filters: Iterable<Bson?>): Bson =
-    filters
-        .filterNotNull()
-        .filterNot { it is Document && it.isEmpty() }
-        .filterNot { it is BsonDocument && it.isEmpty() }
-        .run {
-            if (isEmpty()) EMPTY_BSON
-            else if (size == 1) first()
-            else combiner(this)
-        }
+        filters
+                .filterNotNull()
+                .filterNot { it is Document && it.isEmpty() }
+                .filterNot { it is BsonDocument && it.isEmpty() }
+                .run {
+                    if (isEmpty()) EMPTY_BSON
+                    else if (size == 1) first()
+                    else combiner(this)
+                }
 
 /**
  * Creates a filter that matches all documents that do not match the passed in filter.
@@ -271,7 +271,7 @@ fun nor(filters: Iterable<Bson>): Bson = Filters.nor(filters)
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/exists $exists
  */
-fun <T> KProperty<T>.exists(): Bson = Filters.exists(path())
+inline fun <reified T> KProperty<T>.exists(): Bson = Filters.exists(path())
 
 /**
  * Creates a filter that matches all documents that either contain or do not contain the given property, depending on the value of the
@@ -281,7 +281,7 @@ fun <T> KProperty<T>.exists(): Bson = Filters.exists(path())
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/exists $exists
  */
-infix fun <T> KProperty<T>.exists(exists: Boolean): Bson = Filters.exists(path(), exists)
+inline fun <reified T> KProperty<T>.exists(exists: Boolean): Bson = Filters.exists(path(), exists)
 
 /**
  * Creates a filter that matches all documents where the value of the property is of the specified BSON type.
@@ -290,7 +290,7 @@ infix fun <T> KProperty<T>.exists(exists: Boolean): Bson = Filters.exists(path()
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/type $type
  */
-infix fun <T> KProperty<T>.type(type: BsonType): Bson = Filters.type(path(), type)
+inline fun <reified T> KProperty<T>.type(type: BsonType): Bson = Filters.type(path(), type)
 
 /**
  * Creates a filter that matches all documents where the value of a property divided by a divisor has the specified remainder (i.e. perform
@@ -301,7 +301,7 @@ infix fun <T> KProperty<T>.type(type: BsonType): Bson = Filters.type(path(), typ
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/mod $mod
  */
-fun <T> KProperty<T>.mod(divisor: Long, remainder: Long): Bson = Filters.mod(path(), divisor, remainder)
+inline fun <reified T> KProperty<T>.mod(divisor: Long, remainder: Long): Bson = Filters.mod(path(), divisor, remainder)
 
 /**
  * Creates a filter that matches all documents where the value of the property matches the given regular expression pattern.
@@ -392,7 +392,7 @@ infix fun KProperty<Iterable<String?>>.regex(regex: Regex): Bson = Filters.regex
  * @mongodb.driver.manual reference/operator/query/text $text
  */
 fun text(search: String, textSearchOptions: TextSearchOptions = TextSearchOptions()): Bson =
-    Filters.text(search, textSearchOptions)
+        Filters.text(search, textSearchOptions)
 
 /**
  * Creates a filter that matches all documents for which the given expression is true.
@@ -421,7 +421,7 @@ fun <TExpression> expr(expression: TExpression): Bson = Filters.expr(expression)
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/all $all
  */
-infix fun <@OnlyInputTypes T> KProperty<Iterable<T>?>.all(values: Iterable<T>): Bson = Filters.all(path(), values)
+inline infix fun <@OnlyInputTypes reified T> KProperty<Iterable<T>?>.all(values: Iterable<T>): Bson = Filters.all(path(), values)
 
 /**
  * Creates a filter that matches all documents where the value of a property is an array that contains all the specified values.
@@ -441,7 +441,7 @@ fun <@OnlyInputTypes T> KProperty<Iterable<T>?>.all(vararg values: T): Bson = Fi
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/elemMatch $elemMatch
  */
-infix fun <T> KProperty<Iterable<T>?>.elemMatch(filter: Bson): Bson = Filters.elemMatch(path(), filter)
+inline fun <reified T> KProperty<Iterable<T>?>.elemMatch(filter: Bson): Bson = Filters.elemMatch(path(), filter)
 
 /**
  * Creates a filter that matches all documents where the value of a property is an array of the specified size.
@@ -450,7 +450,7 @@ infix fun <T> KProperty<Iterable<T>?>.elemMatch(filter: Bson): Bson = Filters.el
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/size $size
  */
-infix fun <T> KProperty<T>.size(size: Int): Bson = Filters.size(path(), size)
+inline fun <reified T> KProperty<T>.size(size: Int): Bson = Filters.size(path(), size)
 
 /**
  * Creates a filter that matches all documents where all of the bit positions are clear in the property.
@@ -460,7 +460,7 @@ infix fun <T> KProperty<T>.size(size: Int): Bson = Filters.size(path(), size)
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/bitsAllClear $bitsAllClear
  */
-infix fun <T> KProperty<T>.bitsAllClear(bitmask: Long): Bson = Filters.bitsAllClear(path(), bitmask)
+inline fun <reified T> KProperty<T>.bitsAllClear(bitmask: Long): Bson = Filters.bitsAllClear(path(), bitmask)
 
 /**
  * Creates a filter that matches all documents where all of the bit positions are set in the property.
@@ -469,7 +469,7 @@ infix fun <T> KProperty<T>.bitsAllClear(bitmask: Long): Bson = Filters.bitsAllCl
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/bitsAllSet $bitsAllSet
  */
-infix fun <T> KProperty<T>.bitsAllSet(bitmask: Long): Bson = Filters.bitsAllSet(path(), bitmask)
+inline fun <reified T> KProperty<T>.bitsAllSet(bitmask: Long): Bson = Filters.bitsAllSet(path(), bitmask)
 
 /**
  * Creates a filter that matches all documents where any of the bit positions are clear in the property.
@@ -479,7 +479,7 @@ infix fun <T> KProperty<T>.bitsAllSet(bitmask: Long): Bson = Filters.bitsAllSet(
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/bitsAllClear $bitsAllClear
  */
-infix fun <T> KProperty<T>.bitsAnyClear(bitmask: Long): Bson = Filters.bitsAnyClear(path(), bitmask)
+inline fun <reified T> KProperty<T>.bitsAnyClear(bitmask: Long): Bson = Filters.bitsAnyClear(path(), bitmask)
 
 /**
  * Creates a filter that matches all documents where any of the bit positions are set in the property.
@@ -488,7 +488,7 @@ infix fun <T> KProperty<T>.bitsAnyClear(bitmask: Long): Bson = Filters.bitsAnyCl
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/bitsAnySet $bitsAnySet
  */
-infix fun <T> KProperty<T>.bitsAnySet(bitmask: Long): Bson = Filters.bitsAnySet(path(), bitmask)
+inline fun <reified T> KProperty<T>.bitsAnySet(bitmask: Long): Bson = Filters.bitsAnySet(path(), bitmask)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that exists entirely within the specified shape.
@@ -497,7 +497,7 @@ infix fun <T> KProperty<T>.bitsAnySet(bitmask: Long): Bson = Filters.bitsAnySet(
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/geoWithin/ $geoWithin
  */
-infix fun <T> KProperty<T>.geoWithin(geometry: Geometry): Bson = Filters.geoWithin(path(), geometry)
+inline fun <reified T> KProperty<T>.geoWithin(geometry: Geometry): Bson = Filters.geoWithin(path(), geometry)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that exists entirely within the specified shape.
@@ -506,7 +506,7 @@ infix fun <T> KProperty<T>.geoWithin(geometry: Geometry): Bson = Filters.geoWith
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/geoWithin/ $geoWithin
  */
-infix fun <T> KProperty<T>.geoWithin(geometry: Bson): Bson = Filters.geoWithin(path(), geometry)
+inline fun <reified T> KProperty<T>.geoWithin(geometry: Bson): Bson = Filters.geoWithin(path(), geometry)
 
 /**
  * Creates a filter that matches all documents containing a property with grid coordinates data that exist entirely within the specified
@@ -521,11 +521,11 @@ infix fun <T> KProperty<T>.geoWithin(geometry: Bson): Bson = Filters.geoWithin(p
  * @mongodb.driver.manual reference/operator/query/geoWithin/ $geoWithin
  * @mongodb.driver.manual reference/operator/query/box/#op._S_box $box
  */
-fun <T> KProperty<T>.geoWithinBox(
-    lowerLeftX: Double,
-    lowerLeftY: Double,
-    upperRightX: Double,
-    upperRightY: Double
+inline fun <reified T> KProperty<T>.geoWithinBox(
+        lowerLeftX: Double,
+        lowerLeftY: Double,
+        upperRightX: Double,
+        upperRightY: Double
 ): Bson = Filters.geoWithinBox(path(), lowerLeftX, lowerLeftY, upperRightX, upperRightY)
 
 /**
@@ -537,7 +537,7 @@ fun <T> KProperty<T>.geoWithinBox(
  * @mongodb.driver.manual reference/operator/query/geoWithin/ $geoWithin
  * @mongodb.driver.manual reference/operator/query/polygon/#op._S_polygon $polygon
  */
-infix fun <T> KProperty<T>.geoWithinPolygon(points: List<List<Double>>): Bson = Filters.geoWithinPolygon(path(), points)
+inline fun <reified T> KProperty<T>.geoWithinPolygon(points: List<List<Double>>): Bson = Filters.geoWithinPolygon(path(), points)
 
 /**
  * Creates a filter that matches all documents containing a property with grid coordinates data that exist entirely within the specified
@@ -550,8 +550,8 @@ infix fun <T> KProperty<T>.geoWithinPolygon(points: List<List<Double>>): Bson = 
  * @mongodb.driver.manual reference/operator/query/geoWithin/ $geoWithin
  * @mongodb.driver.manual reference/operator/query/center/#op._S_center $center
  */
-fun <T> KProperty<T>.geoWithinCenter(x: Double, y: Double, radius: Double): Bson =
-    Filters.geoWithinCenter(path(), x, y, radius)
+inline fun <reified T> KProperty<T>.geoWithinCenter(x: Double, y: Double, radius: Double): Bson =
+        Filters.geoWithinCenter(path(), x, y, radius)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data (GeoJSON or legacy coordinate pairs) that exist
@@ -564,8 +564,8 @@ fun <T> KProperty<T>.geoWithinCenter(x: Double, y: Double, radius: Double): Bson
  * @mongodb.driver.manual reference/operator/query/geoWithin/ $geoWithin
  * @mongodb.driver.manual reference/operator/query/centerSphere/#op._S_centerSphere $centerSphere
  */
-fun <T> KProperty<T>.geoWithinCenterSphere(x: Double, y: Double, radius: Double): Bson =
-    Filters.geoWithinCenterSphere(path(), x, y, radius)
+inline fun <reified T> KProperty<T>.geoWithinCenterSphere(x: Double, y: Double, radius: Double): Bson =
+        Filters.geoWithinCenterSphere(path(), x, y, radius)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that intersects with the specified shape.
@@ -574,7 +574,7 @@ fun <T> KProperty<T>.geoWithinCenterSphere(x: Double, y: Double, radius: Double)
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/geoIntersects/ $geoIntersects
  */
-infix fun <T> KProperty<T>.geoIntersects(geometry: Geometry): Bson = Filters.geoIntersects(path(), geometry)
+inline fun <reified T> KProperty<T>.geoIntersects(geometry: Geometry): Bson = Filters.geoIntersects(path(), geometry)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that intersects with the specified shape.
@@ -583,7 +583,7 @@ infix fun <T> KProperty<T>.geoIntersects(geometry: Geometry): Bson = Filters.geo
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/geoIntersects/ $geoIntersects
  */
-infix fun <T> KProperty<T>.geoIntersects(geometry: Bson): Bson = Filters.geoIntersects(path(), geometry)
+inline fun <reified T> KProperty<T>.geoIntersects(geometry: Bson): Bson = Filters.geoIntersects(path(), geometry)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that is near the specified GeoJSON point.
@@ -594,8 +594,8 @@ infix fun <T> KProperty<T>.geoIntersects(geometry: Bson): Bson = Filters.geoInte
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/near/ $near
  */
-fun <T> KProperty<T>.near(geometry: Point, maxDistance: Double? = null, minDistance: Double? = null): Bson =
-    Filters.near(path(), geometry, maxDistance, minDistance)
+inline fun <reified T> KProperty<T>.near(geometry: Point, maxDistance: Double? = null, minDistance: Double? = null): Bson =
+        Filters.near(path(), geometry, maxDistance, minDistance)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that is near the specified GeoJSON point.
@@ -606,8 +606,8 @@ fun <T> KProperty<T>.near(geometry: Point, maxDistance: Double? = null, minDista
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/near/ $near
  */
-fun <T> KProperty<T>.near(geometry: Bson, maxDistance: Double? = null, minDistance: Double? = null): Bson =
-    Filters.near(path(), geometry, maxDistance, minDistance)
+inline fun <reified T> KProperty<T>.near(geometry: Bson, maxDistance: Double? = null, minDistance: Double? = null): Bson =
+        Filters.near(path(), geometry, maxDistance, minDistance)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that is near the specified point.
@@ -619,8 +619,8 @@ fun <T> KProperty<T>.near(geometry: Bson, maxDistance: Double? = null, minDistan
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/near/ $near
  */
-fun <T> KProperty<T>.near(x: Double, y: Double, maxDistance: Double? = null, minDistance: Double? = null): Bson =
-    Filters.near(path(), x, y, maxDistance, minDistance)
+inline fun <reified T> KProperty<T>.near(x: Double, y: Double, maxDistance: Double? = null, minDistance: Double? = null): Bson =
+        Filters.near(path(), x, y, maxDistance, minDistance)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that is near the specified GeoJSON point using
@@ -632,8 +632,8 @@ fun <T> KProperty<T>.near(x: Double, y: Double, maxDistance: Double? = null, min
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/near/ $near
  */
-fun <T> KProperty<T>.nearSphere(geometry: Bson, maxDistance: Double? = null, minDistance: Double? = null): Bson =
-    Filters.nearSphere(path(), geometry, maxDistance, minDistance)
+inline fun <reified T> KProperty<T>.nearSphere(geometry: Bson, maxDistance: Double? = null, minDistance: Double? = null): Bson =
+        Filters.nearSphere(path(), geometry, maxDistance, minDistance)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that is near the specified GeoJSON point using
@@ -645,8 +645,8 @@ fun <T> KProperty<T>.nearSphere(geometry: Bson, maxDistance: Double? = null, min
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/near/ $near
  */
-fun <T> KProperty<T>.nearSphere(geometry: Point, maxDistance: Double? = null, minDistance: Double? = null): Bson =
-    Filters.nearSphere(path(), geometry, maxDistance, minDistance)
+inline fun <reified T> KProperty<T>.nearSphere(geometry: Point, maxDistance: Double? = null, minDistance: Double? = null): Bson =
+        Filters.nearSphere(path(), geometry, maxDistance, minDistance)
 
 /**
  * Creates a filter that matches all documents containing a property with geospatial data that is near the specified point using
@@ -659,8 +659,8 @@ fun <T> KProperty<T>.nearSphere(geometry: Point, maxDistance: Double? = null, mi
  * @return the filter
  * @mongodb.driver.manual reference/operator/query/near/ $near
  */
-fun <T> KProperty<T>.nearSphere(x: Double, y: Double, maxDistance: Double? = null, minDistance: Double? = null): Bson =
-    Filters.nearSphere(path(), x, y, maxDistance, minDistance)
+inline fun <reified T> KProperty<T>.nearSphere(x: Double, y: Double, maxDistance: Double? = null, minDistance: Double? = null): Bson =
+        Filters.nearSphere(path(), x, y, maxDistance, minDistance)
 
 /**
  * Creates a filter that matches all documents that validate against the given JSON schema document.

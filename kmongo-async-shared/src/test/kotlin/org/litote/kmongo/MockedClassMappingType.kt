@@ -20,6 +20,7 @@ import com.nhaarman.mockitokotlin2.mock
 import org.bson.BsonDocument
 import org.bson.codecs.configuration.CodecRegistry
 import org.litote.kmongo.service.ClassMappingTypeService
+import java.lang.reflect.Field
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
@@ -34,11 +35,11 @@ class MockedClassMappingTypeService : ClassMappingTypeService {
 
     override fun toExtendedJson(obj: Any?): String = error("not implemented")
 
-    override fun findIdProperty(type: KClass<*>): KProperty1<*, *>? = error("not implemented")
+    override fun findIdProperty(type: Class<*>): Field? = error("not implemented")
 
     override fun <T, R> getIdValue(idProperty: KProperty1<T, R>, instance: T): R? = error("not implemented")
 
     override fun coreCodecRegistry(): CodecRegistry = mock()
 
-    override fun <T> calculatePath(property: KProperty<T>): String = property.name
+    override fun <T> calculatePath(property: KProperty<T>, clazz: Class<T>?): String = property.name
 }

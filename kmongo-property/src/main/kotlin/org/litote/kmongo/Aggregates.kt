@@ -16,19 +16,7 @@
 
 package org.litote.kmongo
 
-import com.mongodb.client.model.Aggregates
-import com.mongodb.client.model.BsonField
-import com.mongodb.client.model.BucketAutoOptions
-import com.mongodb.client.model.BucketOptions
-import com.mongodb.client.model.Facet
-import com.mongodb.client.model.Field
-import com.mongodb.client.model.Filters
-import com.mongodb.client.model.GraphLookupOptions
-import com.mongodb.client.model.Projections
-import com.mongodb.client.model.Sorts
-import com.mongodb.client.model.UnwindOptions
-import com.mongodb.client.model.Updates
-import com.mongodb.client.model.Variable
+import com.mongodb.client.model.*
 import org.bson.BsonDocument
 import org.bson.BsonDocumentWriter
 import org.bson.codecs.configuration.CodecRegistry
@@ -67,11 +55,11 @@ fun addFields(fields: List<Field<*>>): Bson = Aggregates.addFields(fields)
  * @mongodb.driver.manual reference/operator/aggregation/bucket/ $bucket
  */
 fun <TExpression, Boundary> bucket(
-    groupBy: TExpression,
-    boundaries: List<Boundary>,
-    options: BucketOptions = BucketOptions()
+        groupBy: TExpression,
+        boundaries: List<Boundary>,
+        options: BucketOptions = BucketOptions()
 ): Bson =
-    Aggregates.bucket(groupBy, boundaries, options)
+        Aggregates.bucket(groupBy, boundaries, options)
 
 /**
  * Creates a $bucketAuto pipeline stage
@@ -84,9 +72,9 @@ fun <TExpression, Boundary> bucket(
  * @mongodb.driver.manual reference/operator/aggregation/bucketAuto/ $bucketAuto
  */
 fun <TExpression> bucketAuto(
-    groupBy: TExpression,
-    buckets: Int,
-    options: BucketAutoOptions = BucketAutoOptions()
+        groupBy: TExpression,
+        buckets: Int,
+        options: BucketAutoOptions = BucketAutoOptions()
 ): Bson = Aggregates.bucketAuto(groupBy, buckets, options)
 
 /**
@@ -96,7 +84,7 @@ fun <TExpression> bucketAuto(
  * @return the $count pipeline stage
  * @mongodb.driver.manual reference/operator/aggregation/count/ $count
  */
-fun <T> KProperty<T>.count(): Bson = Aggregates.count(path())
+inline fun <reified T> KProperty<T>.count(): Bson = Aggregates.count(path())
 
 /**
  * Creates a $match pipeline stage for the specified filter
@@ -133,7 +121,7 @@ fun document(vararg elements: Bson?): Bson = document(elements.filterNotNull())
  * @return the document as Bson
  */
 fun document(elements: Collection<Bson>): Bson =
-    if (elements.isEmpty()) EMPTY_BSON else combineFilters(Updates::combine, elements)
+        if (elements.isEmpty()) EMPTY_BSON else combineFilters(Updates::combine, elements)
 
 /**
  * Creates a $project pipeline stage for the specified getProjection
@@ -248,7 +236,7 @@ fun limit(limit: Int): Bson = Aggregates.limit(limit)
  * @mongodb.driver.manual reference/operator/aggregation/lookup/ $lookup
  */
 fun lookup(from: String, localField: String, foreignField: String, newAs: String): Bson =
-    Aggregates.lookup(from, localField, foreignField, newAs)
+        Aggregates.lookup(from, localField, foreignField, newAs)
 
 /**
  * Creates a facet pipeline stage
@@ -282,12 +270,12 @@ fun facet(vararg facets: Facet): Bson = Aggregates.facet(*facets)
  * @mongodb.driver.manual reference/operator/aggregation/graphLookup/ $graphLookup
  */
 fun <TExpression> graphLookup(
-    from: String,
-    startWith: TExpression,
-    connectFromField: String,
-    connectToField: String,
-    fieldAs: String,
-    options: GraphLookupOptions = GraphLookupOptions()
+        from: String,
+        startWith: TExpression,
+        connectFromField: String,
+        connectToField: String,
+        fieldAs: String,
+        options: GraphLookupOptions = GraphLookupOptions()
 ): Bson = Aggregates.graphLookup(from, startWith, connectFromField, connectToField, fieldAs, options)
 
 /**
@@ -301,7 +289,7 @@ fun <TExpression> graphLookup(
  * @mongodb.driver.manual meta/aggregation-quick-reference/#aggregation-expressions Expressions
  */
 fun <TExpression> group(id: TExpression, vararg fieldAccumulators: BsonField): Bson =
-    Aggregates.group(id, *fieldAccumulators)
+        Aggregates.group(id, *fieldAccumulators)
 
 /**
  * Creates a $group pipeline stage for the specified filter
@@ -314,7 +302,7 @@ fun <TExpression> group(id: TExpression, vararg fieldAccumulators: BsonField): B
  * @mongodb.driver.manual meta/aggregation-quick-reference/#aggregation-expressions Expressions
  */
 fun <TExpression> group(id: TExpression, fieldAccumulators: List<BsonField>): Bson =
-    Aggregates.group(id, fieldAccumulators)
+        Aggregates.group(id, fieldAccumulators)
 
 /**
  * Creates a $unwind pipeline stage for the specified field name, which must be prefixed by a `'$'` sign.
@@ -325,7 +313,7 @@ fun <TExpression> group(id: TExpression, fieldAccumulators: List<BsonField>): Bs
  * @mongodb.driver.manual reference/operator/aggregation/unwind/ $unwind
  */
 fun unwind(fieldName: String, unwindOptions: UnwindOptions = UnwindOptions()): Bson =
-    Aggregates.unwind(fieldName, unwindOptions)
+        Aggregates.unwind(fieldName, unwindOptions)
 
 /**
  * Creates a $unwind pipeline stage for the specified field name, which must be prefixed by a `'$'` sign.
@@ -335,8 +323,8 @@ fun unwind(fieldName: String, unwindOptions: UnwindOptions = UnwindOptions()): B
  * @return the $unwind pipeline stage
  * @mongodb.driver.manual reference/operator/aggregation/unwind/ $unwind
  */
-fun <T> KProperty<T>.unwind(unwindOptions: UnwindOptions = UnwindOptions()): Bson =
-    unwind(projection, unwindOptions)
+inline fun <reified T> KProperty<T>.unwind(unwindOptions: UnwindOptions = UnwindOptions()): Bson =
+        unwind(projection(), unwindOptions)
 
 /**
  * Creates a $out pipeline stage for the specified filter
@@ -367,14 +355,14 @@ fun <TExpression> replaceRoot(value: TExpression): Bson = Aggregates.replaceRoot
 fun sample(size: Int): Bson = Aggregates.sample(size)
 
 private class CondExpression<BooleanExpression : Any, ThenExpression : Any, ElseExpression : Any>(
-    val booleanExpression: BooleanExpression?,
-    val thenExpression: ThenExpression?,
-    val elseExpression: ElseExpression?
+        val booleanExpression: BooleanExpression?,
+        val thenExpression: ThenExpression?,
+        val elseExpression: ElseExpression?
 ) : Bson {
 
     override fun <TDocument> toBsonDocument(
-        documentClass: Class<TDocument>,
-        codecRegistry: CodecRegistry
+            documentClass: Class<TDocument>,
+            codecRegistry: CodecRegistry
     ): BsonDocument {
         val writer = BsonDocumentWriter(BsonDocument())
 
@@ -399,9 +387,9 @@ private class CondExpression<BooleanExpression : Any, ThenExpression : Any, Else
  * @param elseExpression the else expression
  */
 fun <BooleanExpression : Any, ThenExpression : Any, ElseExpression : Any> cond(
-    booleanExpression: BooleanExpression,
-    thenExpression: ThenExpression,
-    elseExpression: ElseExpression
+        booleanExpression: BooleanExpression,
+        thenExpression: ThenExpression,
+        elseExpression: ElseExpression
 ): Bson = CondExpression(booleanExpression, thenExpression, elseExpression)
 
 /**
@@ -468,18 +456,18 @@ fun week(property: KProperty<TemporalAccessor?>): Bson = MongoOperator.week.from
  * @since 3.7
  */
 fun lookup(
-    from: String,
-    let: List<Variable<out Any>>? = null,
-    resultProperty: KProperty<Any?>,
-    vararg pipeline: Bson
+        from: String,
+        let: List<Variable<out Any>>? = null,
+        resultProperty: KProperty<Any?>,
+        vararg pipeline: Bson
 ): Bson =
-    @Suppress("UNCHECKED_CAST")
-    Aggregates.lookup<Any>(from, let as List<Variable<Any>>, pipeline.toList(), resultProperty.path())
+        @Suppress("UNCHECKED_CAST")
+        Aggregates.lookup<Any>(from, let as List<Variable<Any>>, pipeline.toList(), resultProperty.path())
 
 /**
  * Defines a [Variable] for the lookup operator.
  */
-fun KProperty<*>.variableDefinition(name: String = path()): Variable<String> = Variable(name, projection)
+inline fun <reified T> KProperty<T>.variableDefinition(name: String = path()): Variable<String> = Variable(name, projection())
 
 /**
  * Defines a [Variable] projection (ie $$name)

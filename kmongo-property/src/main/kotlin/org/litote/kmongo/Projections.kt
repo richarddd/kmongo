@@ -24,7 +24,7 @@ import kotlin.reflect.KProperty
 /**
  * The projection of the property.
  */
-val <T> KProperty<T>.projection: String get() = path().projection
+inline fun <reified T> KProperty<T>.projection(): String = path().projection
 
 /**
  * The projection of the property.
@@ -39,8 +39,8 @@ val String.projection: String get() = "\$$this"
  * @return the projection
  * @see Aggregates#project(Bson)
  */
-infix fun <T> KProperty<T>.from(expression: T): Bson =
-    Projections.computed(path(), expression)
+inline infix fun <reified T> KProperty<T>.from(expression: T): Bson =
+        Projections.computed(path(), expression)
 
 /**
  * Builds Bson for the [MongoOperator] and the specified expression.
@@ -51,8 +51,8 @@ infix fun MongoOperator.from(expression: Any): Bson = toString().from(expression
  * Builds Bson from this String format and the specified expression.
  */
 infix fun String.from(expression: Any): Bson =
-    @Suppress("UNCHECKED_CAST")
-    Projections.computed(this, (expression as? KProperty<Any>)?.projection ?: expression)
+        @Suppress("UNCHECKED_CAST")
+        Projections.computed(this, (expression as? KProperty<Any>)?.projection() ?: expression)
 
 /**
  * Creates a projection that includes all of the given properties.
@@ -101,7 +101,7 @@ fun excludeId(): Bson = Projections.excludeId()
  * @return the projection
  * @mongodb.driver.manual reference/operator/projection/positional/#projection Project the first matching element ($ operator)
  */
-fun <T> KProperty<T>.elemMatchProj(): Bson = Projections.elemMatch(path())
+inline fun <reified T> KProperty<T>.elemMatchProj(): Bson = Projections.elemMatch(path())
 
 /**
  * Creates a projection that includes for the given property only the first element of the array value of that field that matches the given
@@ -111,7 +111,7 @@ fun <T> KProperty<T>.elemMatchProj(): Bson = Projections.elemMatch(path())
  * @return the projection
  * @mongodb.driver.manual reference/operator/projection/elemMatch elemMatch
  */
-fun <T> KProperty<T>.elemMatchProj(filter: Bson): Bson = Projections.elemMatch(path(), filter)
+inline fun <reified T> KProperty<T>.elemMatchProj(filter: Bson): Bson = Projections.elemMatch(path(), filter)
 
 /**
  * Creates a projection to the given property of the textScore, for use with text queries.
@@ -119,7 +119,7 @@ fun <T> KProperty<T>.elemMatchProj(filter: Bson): Bson = Projections.elemMatch(p
  * @return the projection
  * @mongodb.driver.manual reference/operator/projection/meta/#projection textScore
  */
-fun <T> KProperty<T>.metaTextScore(): Bson = Projections.metaTextScore(path())
+inline fun <reified T> KProperty<T>.metaTextScore(): Bson = Projections.metaTextScore(path())
 
 /**
  * Creates a projection to the given property of a slice of the array value of that field.
@@ -128,7 +128,7 @@ fun <T> KProperty<T>.metaTextScore(): Bson = Projections.metaTextScore(path())
  * @return the projection
  * @mongodb.driver.manual reference/operator/projection/slice Slice
  */
-fun <T> KProperty<T>.slice(limit: Int): Bson = Projections.slice(path(), limit)
+inline fun <reified T> KProperty<T>.slice(limit: Int): Bson = Projections.slice(path(), limit)
 
 /**
  * Creates a projection to the given property of a slice of the array value of that field.
@@ -138,7 +138,7 @@ fun <T> KProperty<T>.slice(limit: Int): Bson = Projections.slice(path(), limit)
  * @return the projection
  * @mongodb.driver.manual reference/operator/projection/slice Slice
  */
-fun <T> KProperty<T>.slice(skip: Int, limit: Int): Bson = Projections.slice(path(), skip, limit)
+inline fun <reified T> KProperty<T>.slice(skip: Int, limit: Int): Bson = Projections.slice(path(), skip, limit)
 
 
 /**

@@ -58,34 +58,33 @@ class KPropertyPathTest {
 
     @Test
     fun `test array positional operator`() {
-        val p = Friend::allGifts.colProperty
-        assertEquals("allGifts.\$", p.posOp.path)
+        val p = Friend::allGifts.colProperty()
+        assertEquals("allGifts.\$", p.posOp.path())
         assertEquals("allGifts.amount", (p / Gift::amount).path())
         assertEquals("allGifts.\$.amount", (p.posOp / Gift::amount).path())
     }
 
     @Test
     fun `test array all positional operator`() {
-        val p = Friend::allGifts.colProperty
-        assertEquals("allGifts.\$[]", p.allPosOp.path)
+        val p = Friend::allGifts.colProperty()
+        assertEquals("allGifts.\$[]", p.allPosOp.path())
         assertEquals("allGifts.amount", (p / Gift::amount).path())
         assertEquals("allGifts.\$[].amount", (p.allPosOp / Gift::amount).path())
     }
 
     @Test
     fun `test array filtered positional operator`() {
-        val p = Friend::allGifts.colProperty
-        assertEquals("allGifts.\$[a]", p.filteredPosOp("a").path)
+        val p = Friend::allGifts.colProperty()
+        assertEquals("allGifts.\$[a]", p.filteredPosOp("a").path())
         assertEquals("allGifts.amount", (p / Gift::amount).path())
         assertEquals("allGifts.\$[a].amount", (p.filteredPosOp("a") / Gift::amount).path())
     }
 
     @Test
     fun `test map projection`() {
-        val p = Friend::localeMap.mapProperty
-        assertEquals("localeMap", p.path)
+        val p = Friend::localeMap.mapProperty()
+        assertEquals("localeMap", p.path())
         assertEquals("localeMap.en", p.keyProjection(Locale.ENGLISH).path())
         assertEquals("localeMap.en.amount", (p.keyProjection(Locale.ENGLISH) / Gift::amount).path())
     }
-
 }

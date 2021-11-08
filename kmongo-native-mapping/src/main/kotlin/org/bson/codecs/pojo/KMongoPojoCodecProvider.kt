@@ -20,65 +20,59 @@ import com.mongodb.DBRefCodecProvider
 import com.mongodb.DocumentToDBRefTransformer
 import com.mongodb.client.gridfs.codecs.GridFSFileCodecProvider
 import com.mongodb.client.model.geojson.codecs.GeoJsonCodecProvider
-import org.bson.codecs.BsonValueCodecProvider
-import org.bson.codecs.Codec
-import org.bson.codecs.DocumentCodecProvider
-import org.bson.codecs.IterableCodecProvider
-import org.bson.codecs.MapCodecProvider
-import org.bson.codecs.ValueCodecProvider
+import org.bson.codecs.*
 import org.bson.codecs.configuration.CodecProvider
 import org.bson.codecs.configuration.CodecRegistries
 import org.bson.codecs.configuration.CodecRegistry
-import kotlin.reflect.KClass
 
 /**
  *
  */
 internal class KMongoPojoCodecProvider(serialization: PropertySerialization<Any> = PropertyModelSerializationImpl()) :
-    CodecProvider {
+        CodecProvider {
 
     private val pojoCodecProvider =
-        PojoCodecProvider2
-            .builder()
-            .conventions(
-                listOf(
-                    KMongoConvention(serialization),
-                    ConventionDefaultsImpl2(),
-                    KMongoAnnotationConvention,
-                    EmptyObjectConvention()
-                )
-            )
-            .register(
-                PairPropertyCodecProvider,
-                TriplePropertyCodecProvider,
-                KeyObjectMapPropertyCodecProvider
-            )
-            .automatic(true)
-            .build()
+            PojoCodecProvider2
+                    .builder()
+                    .conventions(
+                            listOf(
+                                    KMongoConvention(serialization),
+                                    ConventionDefaultsImpl2(),
+                                    KMongoAnnotationConvention,
+                                    EmptyObjectConvention()
+                            )
+                    )
+                    .register(
+                            PairPropertyCodecProvider,
+                            TriplePropertyCodecProvider,
+                            KeyObjectMapPropertyCodecProvider
+                    )
+                    .automatic(true)
+                    .build()
 
 
     private val defaultProviders: List<CodecProvider> =
-        listOf(
-            ValueCodecProvider(),
-            BsonValueCodecProvider(),
-            DBRefCodecProvider(),
-            DocumentCodecProvider(DocumentToDBRefTransformer()),
-            IterableCodecProvider(DocumentToDBRefTransformer()),
-            MapCodecProvider(DocumentToDBRefTransformer()),
-            GeoJsonCodecProvider(),
-            GridFSFileCodecProvider(),
+            listOf(
+                    ValueCodecProvider(),
+                    BsonValueCodecProvider(),
+                    DBRefCodecProvider(),
+                    DocumentCodecProvider(DocumentToDBRefTransformer()),
+                    IterableCodecProvider(DocumentToDBRefTransformer()),
+                    MapCodecProvider(DocumentToDBRefTransformer()),
+                    GeoJsonCodecProvider(),
+                    GridFSFileCodecProvider(),
 
-            JavaTimeCodecProvider,
-            UtilClassesCodecProvider
-        )
+                    JavaTimeCodecProvider,
+                    UtilClassesCodecProvider
+            )
 
     val codecRegistry: CodecRegistry =
-        CodecRegistries.fromProviders(
-            defaultProviders + this
-        )
+            CodecRegistries.fromProviders(
+                    defaultProviders + this
+            )
 
-    fun getClassModel(type: KClass<*>): ClassModel<*> {
-        return (codecRegistry.get(type.java) as PojoCodec<*>).classModel
+    fun getClassModel(type: Class<*>): ClassModel<*> {
+        return (codecRegistry.get(type) as PojoCodec<*>).classModel
     }
 
 

@@ -31,7 +31,7 @@ import org.litote.kmongo.id.IdTransformer
 import org.litote.kmongo.id.StringId
 import org.litote.kmongo.id.WrappedObjectId
 import org.litote.kmongo.projection
-import java.util.Locale
+import java.util.*
 import kotlin.reflect.KProperty
 
 /**
@@ -48,7 +48,7 @@ internal object UtilClassesCodecProvider : CodecProvider {
         override fun getEncoderClass(): Class<Locale> = Locale::class.java
 
         override fun decode(reader: BsonReader, decoderContext: DecoderContext): Locale? =
-            Locale.forLanguageTag(reader.readString())
+                Locale.forLanguageTag(reader.readString())
     }
 
     private object IdCodec : Codec<Id<*>> {
@@ -66,11 +66,11 @@ internal object UtilClassesCodecProvider : CodecProvider {
 
         override fun decode(reader: BsonReader, decoderContext: DecoderContext): Id<*>? {
             return IdTransformer.wrapId(
-                when (reader.currentBsonType) {
-                    BsonType.STRING -> reader.readString()
-                    BsonType.OBJECT_ID -> reader.readObjectId()
-                    else -> error("unsupported id token ${reader.currentBsonType}")
-                }
+                    when (reader.currentBsonType) {
+                        BsonType.STRING -> reader.readString()
+                        BsonType.OBJECT_ID -> reader.readObjectId()
+                        else -> error("unsupported id token ${reader.currentBsonType}")
+                    }
             )
         }
 
@@ -80,7 +80,7 @@ internal object UtilClassesCodecProvider : CodecProvider {
         override fun getEncoderClass(): Class<KProperty<*>> = KProperty::class.java
 
         override fun encode(writer: BsonWriter, value: KProperty<*>, encoderContext: EncoderContext?) {
-            writer.writeString(value.projection)
+            writer.writeString(value.projection())
         }
 
         override fun decode(reader: BsonReader, decoderContext: DecoderContext): KProperty<*> {
@@ -104,12 +104,12 @@ internal object UtilClassesCodecProvider : CodecProvider {
     }
 
     private val codecsMap: Map<Class<*>, Codec<*>> = listOf(LocaleCodec, IdCodec)
-        .map { it.encoderClass to it }
-        .toMap() +
+            .map { it.encoderClass to it }
+            .toMap() +
             mapOf(
-                StringId::class.java to IdCodec,
-                WrappedObjectId::class.java to IdCodec,
-                Regex::class.java to RegexCodec
+                    StringId::class.java to IdCodec,
+                    WrappedObjectId::class.java to IdCodec,
+                    Regex::class.java to RegexCodec
             )
 
     override fun <T : Any?> get(clazz: Class<T>, registry: CodecRegistry): Codec<T>? {

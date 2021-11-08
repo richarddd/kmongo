@@ -22,5 +22,5 @@ import kotlin.reflect.KProperty
 /**
  * Find the value for the specified path from the document.
  */
-fun <T> Document.findValue(property: KProperty<T?>): T? = findValue(property.path())
+inline fun <reified T> Document.findValue(property: KProperty<T?>): T? = findValue(property.path())
 

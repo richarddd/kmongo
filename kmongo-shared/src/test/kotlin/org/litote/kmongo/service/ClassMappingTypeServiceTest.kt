@@ -18,7 +18,7 @@ package org.litote.kmongo.service
 
 import org.bson.BsonDocument
 import org.bson.codecs.configuration.CodecRegistry
-import kotlin.reflect.KClass
+import java.lang.reflect.Field
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
@@ -38,7 +38,7 @@ object ClassMappingType : ClassMappingTypeService {
         error("unsupported")
     }
 
-    override fun findIdProperty(type: KClass<*>): KProperty1<*, *>? {
+    override fun findIdProperty(type: Class<*>): Field? {
         error("unsupported")
     }
 
@@ -50,7 +50,7 @@ object ClassMappingType : ClassMappingTypeService {
         error("unsupported")
     }
 
-    override fun <T> calculatePath(property: KProperty<T>): String {
+    override fun <T> calculatePath(property: KProperty<T>, clazz: Class<T>?): String {
         return property.name
     }
 }
@@ -62,8 +62,9 @@ class ClassMappingTypeServiceTest {
 
     @Test
     fun `kotlin property is not cached`() {
-        val p = String::class.memberProperties.first { it.name == "length" }
-        val path = ClassMappingType.getPath(p)
+        @Suppress("UNCHECKED_CAST") val p =
+            String::class.memberProperties.first { it.name == "length" } as KProperty1<String, Int>
+        val path = ClassMappingType.getPath(p, Int::class.java)
         assertEquals("length", path)
         assertEquals(0, pathCache.size)
     }
@@ -71,10 +72,10 @@ class ClassMappingTypeServiceTest {
     @Test
     fun `generated property is cached`() {
         val p = String::length
-        val path = ClassMappingType.getPath(p)
+        val path = ClassMappingType.getPath(p, Int::class.java)
         assertEquals("length", path)
         assertEquals(1, pathCache.size)
-        assertEquals("length", ClassMappingType.getPath(p))
+        assertEquals("length", ClassMappingType.getPath(p, Int::class.java))
         assertEquals(1, pathCache.size)
     }
 }

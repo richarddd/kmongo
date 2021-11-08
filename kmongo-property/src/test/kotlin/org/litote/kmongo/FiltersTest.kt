@@ -24,7 +24,7 @@ import org.bson.codecs.ValueCodecProvider
 import org.bson.codecs.configuration.CodecRegistries
 import org.bson.conversions.Bson
 import org.junit.Test
-import java.util.Arrays
+import java.util.*
 import kotlin.test.assertEquals
 
 /**
@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
  */
 class FiltersTest {
 
-    class T(val s: List<String>, val string:String)
+    class T(val s: List<String>, val string: String)
 
     @Test
     fun `all works with Iterable sub interface`() {
@@ -87,12 +87,12 @@ class FiltersTest {
     }
 
     private val DEFAULT_REGISTRY =
-        CodecRegistries.fromProviders(
-            Arrays.asList(
-                ValueCodecProvider(),
-                BsonValueCodecProvider(),
-                DocumentCodecProvider()
+            CodecRegistries.fromProviders(
+                    Arrays.asList(
+                            ValueCodecProvider(),
+                            BsonValueCodecProvider(),
+                            DocumentCodecProvider()
+                    )
             )
-        )
-    private val Bson.document:BsonDocument get() = toBsonDocument(BsonDocument::class.java, DEFAULT_REGISTRY)
+    private val Bson.document: BsonDocument get() = toBsonDocument(BsonDocument::class.java, DEFAULT_REGISTRY)
 }
